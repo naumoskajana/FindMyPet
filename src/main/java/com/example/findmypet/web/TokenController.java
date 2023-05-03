@@ -1,14 +1,11 @@
 package com.example.findmypet.web;
 
-import com.example.findmypet.dto.MessageDTO;
 import com.example.findmypet.service.MessageService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/api/token")
