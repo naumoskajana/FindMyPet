@@ -11,12 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/api/token")
 public class TokenController {
 
-    private final MessageService messageService;
-
-    public TokenController(MessageService messageService) {
-        this.messageService = messageService;
-    }
-
     @GetMapping("/profile-activation-template")
     public String activateUser(@RequestParam("token") String token, Model model) {
         model.addAttribute("token", token);
