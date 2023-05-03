@@ -1,0 +1,125 @@
+package com.example.findmypet.service.implementation;
+
+import com.example.findmypet.dto.UserChangeDTO;
+import com.example.findmypet.dto.UserRegistrationDTO;
+import com.example.findmypet.enumeration.UserType;
+import com.example.findmypet.entity.user.User;
+import com.example.findmypet.exceptions.ExistingPasswordException;
+import com.example.findmypet.exceptions.UserAlreadyExistsException;
+import com.example.findmypet.exceptions.TokenExpiredException;
+import com.example.findmypet.repository.UserRepository;
+import com.example.findmypet.config.security.JwtUtils;
+import com.example.findmypet.service.EmailService;
+import com.example.findmypet.service.UserService;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserServiceImpl implements UserService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+    private final JwtUtils jwtTokenUtil;
+
+    public UserServiceImpl(UserRepository userRepository,
+                           PasswordEncoder passwordEncoder,
+                           EmailService emailService,
+                           JwtUtils jwtTokenUtil) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
+        this.jwtTokenUtil = jwtTokenUtil;
+    }
+
+    @Override
+    public void register(UserRegistrationDTO userRegistrationDTO) {
+        User existingUser = userRepository.findByEmail(userRegistrationDTO.getEmail());
+
+        if (existingUser != null){
+            throw new UserAlreadyExistsException(userRegistrationDTO.getEmail());
+        }
+
+        User newUser = new User();
+        newUser.setFirstName(userRegistrationDTO.getFirstName());
+        newUser.setLastName(userRegistrationDTO.getLastName());
+        newUser.setEmail(userRegistrationDTO.getEmail());
+        newUser.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
+        newUser.setPhoneNumber(userRegistrationDTO.getPhoneNumber());
+        newUser.setUserType(UserType.USER);
+        newUser.setActivated(false);
+        userRepository.save(newUser);
+
+        String token = jwtTokenUtil.generateJwtToken(new UsernamePasswordAuthenticationToken(newUser, null));
+        String confirmationLink = "Ве молиме кликнете на следниот линк за активација на профилот: localhost:8080/api/token/profile-activation-template?token=" + token;
+        emailService.sendMessage(userRegistrationDTO.getEmail(), "Активација на профил", confirmationLink);
+    }
+
+    @Override
+    public void confirmRegistration(String token) {
+        if (!jwtTokenUtil.validateJwtToken(token)){
+            throw new TokenExpiredException(token);
+        }
+        String email = jwtTokenUtil.getEmailFromJwtToken(token);
+        User user = userRepository.findByEmail(email);
+        user.setActivated(true);
+        userRepository.save(user);
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public void changeUserDetails(UserChangeDTO userChangeDTO) {
+        User user = findByEmail(userChangeDTO.getEmail());
+
+        if (userChangeDTO.getNewPassword() != null) {
+            if (passwordEncoder.encode(user.getPassword()).equals(passwordEncoder.encode(userChangeDTO.getNewPassword()))) {
+                throw new ExistingPasswordException();
+            }
+
+            user.setPassword(passwordEncoder.encode(userChangeDTO.getNewPassword()));
+        }
+
+        if (userChangeDTO.getFullName() != null){
+            String firstName = userChangeDTO.getFullName().split(" ")[0];
+            String lastName = userChangeDTO.getFullName().split(" ")[1];
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+        }
+
+        if (userChangeDTO.getPhoneNumber() != null){
+            user.setPhoneNumber(userChangeDTO.getPhoneNumber());
+        }
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public void resetPasswordLink(String email) {
+        String token = jwtTokenUtil.generateJwtToken(new UsernamePasswordAuthenticationToken(findByEmail(email), null));
+        String resetPasswordLink = "Ве молиме кликнете на линкот за промена на вашата лозинка: localhost:8080/api/token/reset-password-template?token=" + token;
+        emailService.sendMessage(email, "Промена на лозинка", resetPasswordLink);
+    }
+
+    @Override
+    public void resetPassword(String token, String newPassword) {
+        if (!jwtTokenUtil.validateJwtToken(token)){
+            throw new TokenExpiredException(token);
+        }
+        String email = jwtTokenUtil.getEmailFromJwtToken(token);
+        User user = userRepository.findByEmail(email);
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email);
+    }
+}

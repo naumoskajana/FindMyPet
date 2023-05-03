@@ -1,0 +1,19 @@
+package com.example.findmypet.service;
+
+import com.example.findmypet.dto.LostPetCreateDTO;
+import com.example.findmypet.dto.LostPetDTO;
+import com.example.findmypet.entity.pets.LostPet;
+import com.example.findmypet.enumeration.PetType;
+
+import java.util.List;
+
+public interface LostPetService {
+
+    List<LostPetDTO> findAll();
+    LostPet findById(Long lostPetId);
+    LostPetDTO findByIdDTO(Long lostPetId);
+    void create(LostPetCreateDTO lostPetCreateDTO);
+    List<LostPetDTO> findAllByUser(String userEmail);
+    List<PetType> findAllPetTypes();
+
+}

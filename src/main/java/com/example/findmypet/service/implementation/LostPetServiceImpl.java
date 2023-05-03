@@ -1,0 +1,91 @@
+package com.example.findmypet.service.implementation;
+
+import com.example.findmypet.config.file.FileUploadUtil;
+import com.example.findmypet.config.map.MapUtil;
+import com.example.findmypet.dto.AddressMunicipalityDTO;
+import com.example.findmypet.dto.LostPetCreateDTO;
+import com.example.findmypet.dto.LostPetDTO;
+import com.example.findmypet.entity.pets.LostPet;
+import com.example.findmypet.enumeration.LostPetStatus;
+import com.example.findmypet.enumeration.PetType;
+import com.example.findmypet.exceptions.LostPetDoesNotExistException;
+import com.example.findmypet.repository.LostPetRepository;
+import com.example.findmypet.service.LocationService;
+import com.example.findmypet.service.LostPetService;
+import com.example.findmypet.service.UserService;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class LostPetServiceImpl implements LostPetService {
+
+    private final LostPetRepository lostPetRepository;
+    private final UserService userService;
+    private final LocationService locationService;
+
+    public LostPetServiceImpl(LostPetRepository lostPetRepository,
+                              UserService userService,
+                              LocationService locationService) {
+        this.lostPetRepository = lostPetRepository;
+        this.userService = userService;
+        this.locationService = locationService;
+    }
+
+    @Override
+    public List<LostPetDTO> findAll() {
+        return lostPetRepository.findAll().stream().map(LostPet::getAsLostPetDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public LostPet findById(Long lostPetId) {
+        return lostPetRepository.findById(lostPetId).orElseThrow(() -> new LostPetDoesNotExistException(lostPetId));
+    }
+
+    @Override
+    public LostPetDTO findByIdDTO(Long lostPetId) {
+        return lostPetRepository.findById(lostPetId).orElseThrow(() -> new LostPetDoesNotExistException(lostPetId)).getAsLostPetDTO();
+    }
+
+    @Override
+    public void create(LostPetCreateDTO lostPetCreateDTO) {
+        LostPet lostPet = new LostPet();
+        lostPet.setName(lostPetCreateDTO.getName());
+        lostPet.setPetType(lostPetCreateDTO.getPetType());
+        lostPet.setAdditionalInformation(lostPetCreateDTO.getAdditionalInformation());
+        lostPet.setPetOwner(userService.findByEmail(lostPetCreateDTO.getUserEmail()));
+        lostPet.setLostAtTime(lostPetCreateDTO.getLostAtTime());
+        AddressMunicipalityDTO addressMunicipalityDTO = MapUtil.getAddressAndMunicipality(lostPetCreateDTO.getLatitude(), lostPetCreateDTO.getLongitude());
+        lostPet.setLostAtLocation(
+                locationService.create(
+                        lostPetCreateDTO.getLongitude(),
+                        lostPetCreateDTO.getLatitude(),
+                        addressMunicipalityDTO.getMunicipality(),
+                        addressMunicipalityDTO.getAddress()
+                )
+        );
+        lostPet.setLostPetStatus(LostPetStatus.LOST);
+        lostPetRepository.save(lostPet);
+        lostPet.setPhoto("Pictures/" + lostPet.getId() + "/" + lostPetCreateDTO.getPhoto().getOriginalFilename());
+        lostPetRepository.save(lostPet);
+        try {
+            FileUploadUtil.saveFile("Pictures/" + lostPet.getId(), lostPetCreateDTO.getPhoto().getOriginalFilename(), lostPetCreateDTO.getPhoto());
+        }
+        catch (IOException e){
+            System.out.println(e);
+        }
+    }
+
+    @Override
+    public List<LostPetDTO> findAllByUser(String userEmail) {
+        return lostPetRepository.findAllByUser(userService.findByEmail(userEmail).getId()).stream().map(LostPet::getAsLostPetDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PetType> findAllPetTypes() {
+        return Arrays.asList(PetType.values());
+    }
+}
