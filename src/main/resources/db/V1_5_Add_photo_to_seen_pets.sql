@@ -1,1 +1,0 @@
-ALTER TABLE seen_pets ADD COLUMN photo VARCHAR(255);
