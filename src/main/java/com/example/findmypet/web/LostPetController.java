@@ -3,7 +3,10 @@ package com.example.findmypet.web;
 import com.example.findmypet.dto.LostPetCreateDTO;
 import com.example.findmypet.dto.LostPetDTO;
 import com.example.findmypet.enumeration.PetType;
+import com.example.findmypet.exceptions.LostPetDoesNotExistException;
 import com.example.findmypet.service.LostPetService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,8 +32,12 @@ public class LostPetController {
     }
 
     @GetMapping("/id")
-    public LostPetDTO findById(@RequestParam Long lostPetId){
-        return lostPetService.findByIdDTO(lostPetId);
+    public ResponseEntity<?> findById(@RequestParam Long lostPetId){
+        try {
+            return ResponseEntity.ok(lostPetService.findByIdDTO(lostPetId));
+        } catch (LostPetDoesNotExistException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        }
     }
 
     @PostMapping("/create")
