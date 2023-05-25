@@ -6,6 +6,9 @@ import com.example.findmypet.service.CoordinateService;
 import com.example.findmypet.service.LocationService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class LocationServiceImpl implements LocationService {
 
@@ -24,5 +27,10 @@ public class LocationServiceImpl implements LocationService {
         location.setMunicipality(municipality);
         location.setAddress(address);
         return locationRepository.save(location);
+    }
+
+    @Override
+    public List<String> getAllMunicipalities() {
+        return locationRepository.findAll().stream().map(Location::getMunicipality).collect(Collectors.toList());
     }
 }
