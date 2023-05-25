@@ -36,8 +36,10 @@ public class LostPetServiceImpl implements LostPetService {
     }
 
     @Override
-    public List<LostPetDTO> findAll() {
-        return lostPetRepository.findAll().stream().map(LostPet::getAsLostPetDTO).collect(Collectors.toList());
+    public List<LostPetDTO> findAll(String keyword, List<PetType> petTypes, List<String> municipalities) {
+        return lostPetRepository.findAllSearch(keyword.toLowerCase(), petTypes, municipalities.stream().map(String::toLowerCase).collect(Collectors.toList()))
+                .stream().map(LostPet::getAsLostPetDTO)
+                .collect(Collectors.toList());
     }
 
     @Override

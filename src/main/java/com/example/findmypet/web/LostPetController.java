@@ -27,8 +27,10 @@ public class LostPetController {
     }
 
     @GetMapping("/all")
-    public List<LostPetDTO> findAll(){
-        return lostPetService.findAll();
+    public List<LostPetDTO> findAll(@RequestParam String search,
+                                    @RequestParam List<PetType> types,
+                                    @RequestParam List<String> municipalities){
+        return lostPetService.findAll(search, types, municipalities);
     }
 
     @GetMapping("/id")
