@@ -15,7 +15,6 @@ import com.example.findmypet.config.security.JwtUtils;
 import com.example.findmypet.service.EmailService;
 import com.example.findmypet.service.UserService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;

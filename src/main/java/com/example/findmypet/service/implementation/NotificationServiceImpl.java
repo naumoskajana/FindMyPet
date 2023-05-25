@@ -1,6 +1,5 @@
 package com.example.findmypet.service.implementation;
 
-import com.example.findmypet.enumeration.NotificationType;
 import com.example.findmypet.service.NotificationService;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;

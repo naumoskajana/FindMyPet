@@ -1,7 +1,6 @@
 package com.example.findmypet.config.security;
 
 import com.example.findmypet.entity.user.User;
-import com.example.findmypet.exceptions.TokenExpiredException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
