@@ -1,17 +1,21 @@
 package com.example.findmypet.service.implementation;
 
 import com.example.findmypet.dto.UserChangeDTO;
+import com.example.findmypet.dto.UserDTO;
+import com.example.findmypet.dto.UserLoginDTO;
 import com.example.findmypet.dto.UserRegistrationDTO;
 import com.example.findmypet.enumeration.UserType;
 import com.example.findmypet.entity.user.User;
 import com.example.findmypet.exceptions.ExistingPasswordException;
 import com.example.findmypet.exceptions.UserAlreadyExistsException;
 import com.example.findmypet.exceptions.TokenExpiredException;
+import com.example.findmypet.exceptions.UserHasInactiveAccountException;
 import com.example.findmypet.repository.UserRepository;
 import com.example.findmypet.config.security.JwtUtils;
 import com.example.findmypet.service.EmailService;
 import com.example.findmypet.service.UserService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,8 +48,8 @@ public class UserServiceImpl implements UserService {
         }
 
         User newUser = new User();
-        newUser.setFirstName(userRegistrationDTO.getFirstName());
-        newUser.setLastName(userRegistrationDTO.getLastName());
+        newUser.setFirstName(userRegistrationDTO.getFullName().split(" ")[0]);
+        newUser.setLastName(userRegistrationDTO.getFullName().split(" ")[1]);
         newUser.setEmail(userRegistrationDTO.getEmail());
         newUser.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
         newUser.setPhoneNumber(userRegistrationDTO.getPhoneNumber());
@@ -67,6 +71,17 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email);
         user.setActivated(true);
         userRepository.save(user);
+    }
+
+    @Override
+    public void login(UserLoginDTO userLoginDTO) {
+        User user = findByEmail(userLoginDTO.getEmail());
+
+        if (!user.getActivated()){
+            throw new UserHasInactiveAccountException(user.getEmail());
+        }
+
+        user.setDeviceToken(userLoginDTO.getDeviceToken());
     }
 
     @Override
@@ -116,6 +131,14 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email);
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
+    }
+
+    @Override
+    public UserDTO getLoggedInUser(String token) {
+        String email = jwtTokenUtil.getEmailFromJwtToken(token);
+        User user = userRepository.findByEmail(email);
+
+        return user.getAsUserDTO();
     }
 
     @Override

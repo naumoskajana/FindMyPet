@@ -1,13 +1,17 @@
 package com.example.findmypet.web;
 
 import com.example.findmypet.dto.UserChangeDTO;
+import com.example.findmypet.dto.UserDTO;
 import com.example.findmypet.dto.UserLoginDTO;
 import com.example.findmypet.dto.UserRegistrationDTO;
 import com.example.findmypet.config.security.CustomEmailAndPasswordProvider;
 import com.example.findmypet.config.security.JwtUtils;
 import com.example.findmypet.entity.user.User;
+import com.example.findmypet.exceptions.UserAlreadyExistsException;
 import com.example.findmypet.exceptions.UserHasInactiveAccountException;
 import com.example.findmypet.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,9 +37,15 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public void registerUser(@RequestBody UserRegistrationDTO userRegistrationDTO) {
-        userService.register(userRegistrationDTO);
+    public ResponseEntity<String> registerUser(@RequestBody UserRegistrationDTO userRegistrationDTO) {
+        try {
+            userService.register(userRegistrationDTO);
+            return ResponseEntity.ok("User registered successfully.");
+        } catch (UserAlreadyExistsException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        }
     }
+
 
     @GetMapping("/activate")
     public void activateUser(@RequestParam("token") String token) {
@@ -43,11 +53,11 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String loginUser(@RequestBody UserLoginDTO userLoginDTO) {
-        User user = userService.findByEmail(userLoginDTO.getEmail());
-
-        if (!user.getActivated()){
-            throw new UserHasInactiveAccountException(user.getEmail());
+    public ResponseEntity<String> loginUser(@RequestBody UserLoginDTO userLoginDTO) {
+        try {
+            userService.login(userLoginDTO);
+        } catch (UserHasInactiveAccountException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
         }
 
         Authentication authentication = customEmailAndPasswordProvider.authenticate(
@@ -56,11 +66,11 @@ public class UserController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return jwtUtils.generateJwtToken(authentication);
+        return ResponseEntity.ok(jwtUtils.generateJwtToken(authentication));
     }
 
     @GetMapping("/validate-token")
-    public Boolean validateToken(String token) {
+    public Boolean validateToken(@RequestParam String token) {
         return jwtUtils.validateJwtToken(token);
     }
 
@@ -77,6 +87,14 @@ public class UserController {
     @PostMapping("/reset-password")
     public void resetPassword(@RequestParam String token, @RequestParam String password){
         userService.resetPassword(token, password);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserDTO> getLoggedInUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+
+        return ResponseEntity.ok(user.getAsUserDTO());
     }
 
 }

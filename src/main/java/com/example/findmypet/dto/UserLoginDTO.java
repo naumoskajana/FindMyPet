@@ -11,5 +11,6 @@ public class UserLoginDTO {
 
     private String email;
     private String password;
+    private String deviceToken;
 
 }
