@@ -81,6 +81,8 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setDeviceToken(userLoginDTO.getDeviceToken());
+
+        userRepository.save(user);
     }
 
     @Override

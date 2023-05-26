@@ -4,7 +4,6 @@ import com.example.findmypet.dto.UserChangeDTO;
 import com.example.findmypet.dto.UserDTO;
 import com.example.findmypet.dto.UserLoginDTO;
 import com.example.findmypet.dto.UserRegistrationDTO;
-import com.example.findmypet.config.security.CustomEmailAndPasswordProvider;
 import com.example.findmypet.config.security.JwtUtils;
 import com.example.findmypet.entity.user.User;
 import com.example.findmypet.exceptions.UserAlreadyExistsException;
@@ -12,6 +11,7 @@ import com.example.findmypet.exceptions.UserHasInactiveAccountException;
 import com.example.findmypet.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,13 +27,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
-    private final CustomEmailAndPasswordProvider customEmailAndPasswordProvider;
     private final JwtUtils jwtUtils;
+    private final AuthenticationManager authenticationManager;
 
-    public UserController(UserService userService, CustomEmailAndPasswordProvider customEmailAndPasswordProvider, JwtUtils jwtUtils) {
+    public UserController(UserService userService, JwtUtils jwtUtils, AuthenticationManager authenticationManager) {
         this.userService = userService;
-        this.customEmailAndPasswordProvider = customEmailAndPasswordProvider;
         this.jwtUtils = jwtUtils;
+        this.authenticationManager = authenticationManager;
     }
 
     @PostMapping("/register")
@@ -60,7 +60,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
         }
 
-        Authentication authentication = customEmailAndPasswordProvider.authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userLoginDTO.getEmail(), userLoginDTO.getPassword())
         );
 

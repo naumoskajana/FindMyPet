@@ -64,27 +64,27 @@ public class User implements UserDetails{
 
     @Override
     public String getUsername() {
-        return null;
+        return email;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return activated;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return activated;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return activated;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return activated;
     }
 
     @JsonIgnore
