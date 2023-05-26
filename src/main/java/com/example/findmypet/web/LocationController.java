@@ -1,6 +1,7 @@
 package com.example.findmypet.web;
 
 import com.example.findmypet.service.LocationService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +19,7 @@ public class LocationController {
     }
 
     @GetMapping("/municipalities/all")
-    public List<String> getAllMunicipalities(){
-        return locationService.getAllMunicipalities();
+    public ResponseEntity<List<String>> getAllMunicipalities(){
+        return ResponseEntity.ok(locationService.getAllMunicipalities());
     }
 }

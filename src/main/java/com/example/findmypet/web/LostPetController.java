@@ -3,6 +3,8 @@ package com.example.findmypet.web;
 import com.example.findmypet.dto.LostPetCreateDTO;
 import com.example.findmypet.dto.LostPetDTO;
 import com.example.findmypet.enumeration.PetType;
+import com.example.findmypet.exceptions.CouldNotFetchAddressAndMunicipalityException;
+import com.example.findmypet.exceptions.CouldNotSaveFileException;
 import com.example.findmypet.exceptions.LostPetDoesNotExistException;
 import com.example.findmypet.service.LostPetService;
 import org.springframework.http.HttpStatus;
@@ -27,10 +29,10 @@ public class LostPetController {
     }
 
     @GetMapping("/all")
-    public List<LostPetDTO> findAll(@RequestParam String search,
+    public ResponseEntity<List<LostPetDTO>> findAll(@RequestParam String search,
                                     @RequestParam List<PetType> types,
                                     @RequestParam List<String> municipalities){
-        return lostPetService.findAll(search, types, municipalities);
+        return ResponseEntity.ok(lostPetService.findAll(search, types, municipalities));
     }
 
     @GetMapping("/id")
@@ -43,17 +45,22 @@ public class LostPetController {
     }
 
     @PostMapping("/create")
-    public void create(@RequestBody LostPetCreateDTO lostPetCreateDTO){
-        lostPetService.create(lostPetCreateDTO);
+    public ResponseEntity<String> create(@RequestBody LostPetCreateDTO lostPetCreateDTO){
+        try {
+            lostPetService.create(lostPetCreateDTO);
+            return ResponseEntity.ok("Lost pet created successfully.");
+        } catch (CouldNotFetchAddressAndMunicipalityException | LostPetDoesNotExistException | CouldNotSaveFileException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        }
     }
 
     @GetMapping("/pets-by-user")
-    public List<LostPetDTO> findAllByUserId(@RequestParam String email){
-        return lostPetService.findAllByUser(email);
+    public ResponseEntity<List<LostPetDTO>> findAllByUserId(@RequestParam String email){
+        return ResponseEntity.ok(lostPetService.findAllByUser(email));
     }
 
     @GetMapping("/pet-types")
-    public List<PetType> findAllPetTypes(){
-        return lostPetService.findAllPetTypes();
+    public ResponseEntity<List<PetType>> findAllPetTypes(){
+        return ResponseEntity.ok(lostPetService.findAllPetTypes());
     }
 }

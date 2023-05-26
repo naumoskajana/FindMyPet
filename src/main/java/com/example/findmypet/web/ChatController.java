@@ -3,6 +3,7 @@ package com.example.findmypet.web;
 import com.example.findmypet.dto.MessageDTO;
 import com.example.findmypet.dto.SendMessageDTO;
 import com.example.findmypet.service.MessageService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,8 +29,8 @@ public class ChatController {
     }
 
     @GetMapping
-    public List<MessageDTO> getMessages(@RequestParam String senderEmail, @RequestParam String recipientEmail) {
-        return messageService.findAllBySenderAndRecipient(senderEmail, recipientEmail);
+    public ResponseEntity<List<MessageDTO>> getMessages(@RequestParam String senderEmail, @RequestParam String recipientEmail) {
+        return ResponseEntity.ok(messageService.findAllBySenderAndRecipient(senderEmail, recipientEmail));
     }
 
 }

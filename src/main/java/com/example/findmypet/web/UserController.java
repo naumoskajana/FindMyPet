@@ -6,6 +6,8 @@ import com.example.findmypet.dto.UserLoginDTO;
 import com.example.findmypet.dto.UserRegistrationDTO;
 import com.example.findmypet.config.security.JwtUtils;
 import com.example.findmypet.entity.user.User;
+import com.example.findmypet.exceptions.ExistingPasswordException;
+import com.example.findmypet.exceptions.TokenExpiredException;
 import com.example.findmypet.exceptions.UserAlreadyExistsException;
 import com.example.findmypet.exceptions.UserHasInactiveAccountException;
 import com.example.findmypet.service.UserService;
@@ -51,8 +53,13 @@ public class UserController {
 
 
     @GetMapping("/activate")
-    public void activateUser(@RequestParam("token") String token) {
-        userService.confirmRegistration(token);
+    public ResponseEntity<String> activateUser(@RequestParam("token") String token) {
+        try {
+            userService.confirmRegistration(token);
+            return ResponseEntity.ok("User activated successfully.");
+        } catch (TokenExpiredException ex){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        }
     }
 
     @PostMapping("/login")
@@ -73,13 +80,18 @@ public class UserController {
     }
 
     @GetMapping("/validate-token")
-    public Boolean validateToken(@RequestParam String token) {
-        return jwtUtils.validateJwtToken(token);
+    public ResponseEntity<Boolean> validateToken(@RequestParam String token) {
+        return ResponseEntity.ok(jwtUtils.validateJwtToken(token));
     }
 
     @PostMapping("/change-user-details")
-    public void changeUserDetails(@RequestBody UserChangeDTO userChangeDTO) {
-        userService.changeUserDetails(userChangeDTO);
+    public ResponseEntity<String> changeUserDetails(@RequestBody UserChangeDTO userChangeDTO) {
+        try {
+            userService.changeUserDetails(userChangeDTO);
+            return ResponseEntity.ok("User edited successfully.");
+        } catch (ExistingPasswordException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        }
     }
 
     @GetMapping("/reset-password")
@@ -88,8 +100,13 @@ public class UserController {
     }
 
     @PostMapping("/reset-password")
-    public void resetPassword(@RequestParam String token, @RequestParam String password){
-        userService.resetPassword(token, password);
+    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String password){
+        try {
+            userService.resetPassword(token, password);
+            return ResponseEntity.ok("User password reset successfully.");
+        } catch (TokenExpiredException ex){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        }
     }
 
     @GetMapping("/me")

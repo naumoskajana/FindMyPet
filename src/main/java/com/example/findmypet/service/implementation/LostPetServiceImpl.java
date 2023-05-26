@@ -8,6 +8,8 @@ import com.example.findmypet.dto.LostPetDTO;
 import com.example.findmypet.entity.pets.LostPet;
 import com.example.findmypet.enumeration.LostPetStatus;
 import com.example.findmypet.enumeration.PetType;
+import com.example.findmypet.exceptions.CouldNotFetchAddressAndMunicipalityException;
+import com.example.findmypet.exceptions.CouldNotSaveFileException;
 import com.example.findmypet.exceptions.LostPetDoesNotExistException;
 import com.example.findmypet.repository.LostPetRepository;
 import com.example.findmypet.service.LocationService;
@@ -60,15 +62,19 @@ public class LostPetServiceImpl implements LostPetService {
         lostPet.setAdditionalInformation(lostPetCreateDTO.getAdditionalInformation());
         lostPet.setPetOwner(userService.findByEmail(lostPetCreateDTO.getUserEmail()));
         lostPet.setLostAtTime(lostPetCreateDTO.getLostAtTime());
-        AddressMunicipalityDTO addressMunicipalityDTO = MapUtil.getAddressAndMunicipality(lostPetCreateDTO.getLatitude(), lostPetCreateDTO.getLongitude());
-        lostPet.setLostAtLocation(
-                locationService.create(
-                        lostPetCreateDTO.getLongitude(),
-                        lostPetCreateDTO.getLatitude(),
-                        addressMunicipalityDTO.getMunicipality(),
-                        addressMunicipalityDTO.getAddress()
-                )
-        );
+        try {
+            AddressMunicipalityDTO addressMunicipalityDTO = MapUtil.getAddressAndMunicipality(lostPetCreateDTO.getLatitude(), lostPetCreateDTO.getLongitude());
+            lostPet.setLostAtLocation(
+                    locationService.create(
+                            lostPetCreateDTO.getLongitude(),
+                            lostPetCreateDTO.getLatitude(),
+                            addressMunicipalityDTO.getMunicipality(),
+                            addressMunicipalityDTO.getAddress()
+                    )
+            );
+        } catch (CouldNotFetchAddressAndMunicipalityException ex) {
+            throw new CouldNotFetchAddressAndMunicipalityException();
+        }
         lostPet.setLostPetStatus(LostPetStatus.LOST);
         lostPetRepository.save(lostPet);
         lostPet.setPhoto("Pictures/" + lostPet.getId() + "/" + lostPetCreateDTO.getPhoto().getOriginalFilename());
@@ -77,7 +83,7 @@ public class LostPetServiceImpl implements LostPetService {
             FileUploadUtil.saveFile("Pictures/" + lostPet.getId(), lostPetCreateDTO.getPhoto().getOriginalFilename(), lostPetCreateDTO.getPhoto());
         }
         catch (IOException e){
-            System.out.println(e);
+            throw new CouldNotSaveFileException("Could not save file.");
         }
     }
 
