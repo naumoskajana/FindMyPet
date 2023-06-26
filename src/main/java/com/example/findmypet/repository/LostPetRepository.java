@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface LostPetRepository extends JpaRepository<LostPet, Long> {
 
-    @Query(nativeQuery = true, value = "SELECT * FROM lost_pets lp WHERE lp.user_id = :userId")
+    @Query(nativeQuery = true, value = "SELECT * FROM lost_pets lp WHERE lp.pet_owner_id = :userId")
     List<LostPet> findAllByUser(@Param("userId") Long userId);
 
     @Query("SELECT lp FROM LostPet lp " +

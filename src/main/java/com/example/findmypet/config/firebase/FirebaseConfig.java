@@ -14,7 +14,9 @@ public class FirebaseConfig {
 
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
-        FileInputStream serviceAccount = new FileInputStream("C:\\Users\\jana.naumoska\\Documents\\findmypet-notifications-firebase-adminsdk-yy3b3-32edde0aca.json");
+        // TODO: comment / uncomment
+//        FileInputStream serviceAccount = new FileInputStream("C:\\Users\\jana.naumoska\\Documents\\findmypet-notifications-firebase-adminsdk-yy3b3-32edde0aca.json");
+        FileInputStream serviceAccount = new FileInputStream("/Users/viktortasevski/Desktop/faks/mis/domasna2/findmypet-notifications-firebase-adminsdk-yy3b3-32edde0aca.json");
 
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))

@@ -29,9 +29,9 @@ public class LostPetController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<LostPetDTO>> findAll(@RequestParam String search,
-                                    @RequestParam List<PetType> types,
-                                    @RequestParam List<String> municipalities){
+    public ResponseEntity<List<LostPetDTO>> findAll(@RequestParam(required = false, defaultValue = "") String search,
+                                    @RequestParam(required = false, defaultValue = "") List<PetType> types,
+                                    @RequestParam(required = false, defaultValue = "") List<String> municipalities){
         return ResponseEntity.ok(lostPetService.findAll(search, types, municipalities));
     }
 
@@ -55,8 +55,9 @@ public class LostPetController {
     }
 
     @GetMapping("/pets-by-user")
-    public ResponseEntity<List<LostPetDTO>> findAllByUserId(@RequestParam String email){
-        return ResponseEntity.ok(lostPetService.findAllByUser(email));
+    public ResponseEntity<List<LostPetDTO>> findAllByUserId(){
+        // TODO: find all pets by the logged in user. Extract that info from Security Context or JWT
+        return ResponseEntity.ok(lostPetService.findAllByUser("viktor-tasevski@hotmail.com"));
     }
 
     @GetMapping("/pet-types")
