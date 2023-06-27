@@ -1,7 +1,6 @@
 package com.example.findmypet.service;
 
 import com.example.findmypet.dto.UserChangeDTO;
-import com.example.findmypet.dto.UserDTO;
 import com.example.findmypet.dto.UserLoginDTO;
 import com.example.findmypet.dto.UserRegistrationDTO;
 import com.example.findmypet.entity.user.User;
@@ -13,7 +12,7 @@ public interface UserService extends UserDetailsService {
     void confirmRegistration(String token);
     void login(UserLoginDTO userLoginDTO);
     User findByEmail(String email);
-    void changeUserDetails(UserChangeDTO userChangeDTO);
+    void changeUserDetails(User user, UserChangeDTO userChangeDTO);
     void resetPasswordLink(String email);
     void resetPassword(String token, String newPassword);
     void deleteUser(Long userId);

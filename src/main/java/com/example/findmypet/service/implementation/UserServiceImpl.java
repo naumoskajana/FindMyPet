@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(newUser);
 
         String token = jwtTokenUtil.generateJwtToken(new UsernamePasswordAuthenticationToken(newUser, null));
-        String confirmationLink = "Ве молиме кликнете на следниот линк за активација на профилот: localhost:8080/api/token/profile-activation-template?token=" + token;
+        String confirmationLink = "Ве молиме кликнете на следниот линк за активација на профилот: http://localhost:8080/api/token/profile-activation-template?token=" + token;
         emailService.sendMessage(userRegistrationDTO.getEmail(), "Активација на профил", confirmationLink);
     }
 
@@ -91,9 +91,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changeUserDetails(UserChangeDTO userChangeDTO) {
-        User user = findByEmail(userChangeDTO.getEmail());
-
+    public void changeUserDetails(User user, UserChangeDTO userChangeDTO) {
         if (userChangeDTO.getNewPassword() != null) {
             if (passwordEncoder.encode(user.getPassword()).equals(passwordEncoder.encode(userChangeDTO.getNewPassword()))) {
                 throw new ExistingPasswordException();
@@ -103,8 +101,9 @@ public class UserServiceImpl implements UserService {
         }
 
         if (userChangeDTO.getFullName() != null){
-            String firstName = userChangeDTO.getFullName().split(" ")[0];
-            String lastName = userChangeDTO.getFullName().split(" ")[1];
+            String[] fullNameSplitted = userChangeDTO.getFullName().split("\\s+");
+            String firstName = fullNameSplitted[0];
+            String lastName = fullNameSplitted.length > 1 ? fullNameSplitted[1] : "";
             user.setFirstName(firstName);
             user.setLastName(lastName);
         }
@@ -119,7 +118,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void resetPasswordLink(String email) {
         String token = jwtTokenUtil.generateJwtToken(new UsernamePasswordAuthenticationToken(findByEmail(email), null));
-        String resetPasswordLink = "Ве молиме кликнете на линкот за промена на вашата лозинка: localhost:8080/api/token/reset-password-template?token=" + token;
+        String resetPasswordLink = "Ве молиме кликнете на линкот за промена на вашата лозинка: http://localhost:8080/api/token/reset-password-template?token=" + token;
         emailService.sendMessage(email, "Промена на лозинка", resetPasswordLink);
     }
 

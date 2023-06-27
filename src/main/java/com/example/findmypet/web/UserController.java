@@ -87,7 +87,8 @@ public class UserController {
     @PostMapping("/change-user-details")
     public ResponseEntity<String> changeUserDetails(@RequestBody UserChangeDTO userChangeDTO) {
         try {
-            userService.changeUserDetails(userChangeDTO);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            userService.changeUserDetails(user, userChangeDTO);
             return ResponseEntity.ok("User edited successfully.");
         } catch (ExistingPasswordException ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
