@@ -88,8 +88,8 @@ public class LostPetServiceImpl implements LostPetService {
     }
 
     @Override
-    public List<LostPetDTO> findAllByUser(String userEmail) {
-        return lostPetRepository.findAllByUser(userService.findByEmail(userEmail).getId()).stream().map(LostPet::getAsLostPetDTO).collect(Collectors.toList());
+    public List<LostPetDTO> findAllByUser(Long userId) {
+        return lostPetRepository.findAllByUser(userId).stream().map(LostPet::getAsLostPetDTO).collect(Collectors.toList());
     }
 
     @Override

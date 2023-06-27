@@ -6,10 +6,7 @@ import com.example.findmypet.dto.UserLoginDTO;
 import com.example.findmypet.dto.UserRegistrationDTO;
 import com.example.findmypet.config.security.JwtUtils;
 import com.example.findmypet.entity.user.User;
-import com.example.findmypet.exceptions.ExistingPasswordException;
-import com.example.findmypet.exceptions.TokenExpiredException;
-import com.example.findmypet.exceptions.UserAlreadyExistsException;
-import com.example.findmypet.exceptions.UserHasInactiveAccountException;
+import com.example.findmypet.exceptions.*;
 import com.example.findmypet.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -87,7 +84,9 @@ public class UserController {
     @PostMapping("/change-user-details")
     public ResponseEntity<String> changeUserDetails(@RequestBody UserChangeDTO userChangeDTO) {
         try {
-            userService.changeUserDetails(userChangeDTO);
+             Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+             User user = (User) authentication.getPrincipal();
+            userService.changeUserDetails(user, userChangeDTO);
             return ResponseEntity.ok("User edited successfully.");
         } catch (ExistingPasswordException ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());

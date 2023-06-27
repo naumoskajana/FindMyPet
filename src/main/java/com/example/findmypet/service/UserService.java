@@ -13,7 +13,7 @@ public interface UserService extends UserDetailsService {
     void confirmRegistration(String token);
     void login(UserLoginDTO userLoginDTO);
     User findByEmail(String email);
-    void changeUserDetails(UserChangeDTO userChangeDTO);
+    void changeUserDetails(User user, UserChangeDTO userChangeDTO);
     void resetPasswordLink(String email);
     void resetPassword(String token, String newPassword);
     UserDTO getLoggedInUser(String token);

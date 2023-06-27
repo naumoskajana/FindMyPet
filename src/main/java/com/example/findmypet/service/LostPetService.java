@@ -13,7 +13,7 @@ public interface LostPetService {
     LostPet findById(Long lostPetId);
     LostPetDTO findByIdDTO(Long lostPetId);
     void create(LostPetCreateDTO lostPetCreateDTO);
-    List<LostPetDTO> findAllByUser(String userEmail);
+    List<LostPetDTO> findAllByUser(Long userId);
     List<PetType> findAllPetTypes();
 
 }
