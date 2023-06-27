@@ -32,8 +32,8 @@ public class LostPetController {
 
     @GetMapping("/all")
     public ResponseEntity<List<LostPetDTO>> findAll(@RequestParam(required = false, defaultValue = "") String search,
-                                    @RequestParam(required = false, defaultValue = "") List<PetType> types,
-                                    @RequestParam(required = false, defaultValue = "") List<String> municipalities){
+                                                    @RequestParam(required = false, defaultValue = "") List<PetType> types,
+                                                    @RequestParam(required = false, defaultValue = "") List<String> municipalities){
         return ResponseEntity.ok(lostPetService.findAll(search, types, municipalities));
     }
 
