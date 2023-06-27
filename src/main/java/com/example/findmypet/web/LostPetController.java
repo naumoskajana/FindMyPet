@@ -2,6 +2,7 @@ package com.example.findmypet.web;
 
 import com.example.findmypet.dto.LostPetCreateDTO;
 import com.example.findmypet.dto.LostPetDTO;
+import com.example.findmypet.entity.user.User;
 import com.example.findmypet.enumeration.PetType;
 import com.example.findmypet.exceptions.CouldNotFetchAddressAndMunicipalityException;
 import com.example.findmypet.exceptions.CouldNotSaveFileException;
@@ -9,6 +10,7 @@ import com.example.findmypet.exceptions.LostPetDoesNotExistException;
 import com.example.findmypet.service.LostPetService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,8 +58,8 @@ public class LostPetController {
 
     @GetMapping("/pets-by-user")
     public ResponseEntity<List<LostPetDTO>> findAllByUserId(){
-        // TODO: find all pets by the logged in user. Extract that info from Security Context or JWT
-        return ResponseEntity.ok(lostPetService.findAllByUser("viktor-tasevski@hotmail.com"));
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(lostPetService.findAllByUser(user.getId()));
     }
 
     @GetMapping("/pet-types")
