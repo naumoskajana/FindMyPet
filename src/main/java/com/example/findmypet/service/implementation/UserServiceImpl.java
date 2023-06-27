@@ -135,11 +135,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO getLoggedInUser(String token) {
-        String email = jwtTokenUtil.getEmailFromJwtToken(token);
-        User user = userRepository.findByEmail(email);
-
-        return user.getAsUserDTO();
+    public void deleteUser(Long userId) {
+        userRepository.deleteById(userId);
     }
 
     @Override

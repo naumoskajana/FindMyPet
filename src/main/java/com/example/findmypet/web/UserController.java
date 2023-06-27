@@ -110,18 +110,16 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserDTO> getLoggedInUser(HttpServletRequest request) {
-        String headerAuth = request.getHeader("Authorization");
-        String token = "";
-
-        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            token = headerAuth.substring(7);
-        }
-
-        String email = jwtUtils.getEmailFromJwtToken(token);
-        User user = userService.findByEmail(email);
-
+    public ResponseEntity<UserDTO> getLoggedInUser() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(user.getAsUserDTO());
+    }
+
+    @GetMapping("/delete")
+    public void deleteUser() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userService.deleteUser(user.getId());
+        SecurityContextHolder.clearContext();
     }
 
 }

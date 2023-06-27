@@ -16,5 +16,5 @@ public interface UserService extends UserDetailsService {
     void changeUserDetails(UserChangeDTO userChangeDTO);
     void resetPasswordLink(String email);
     void resetPassword(String token, String newPassword);
-    UserDTO getLoggedInUser(String token);
+    void deleteUser(Long userId);
 }
