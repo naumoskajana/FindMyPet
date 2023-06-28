@@ -96,4 +96,9 @@ public class LostPetServiceImpl implements LostPetService {
     public List<PetType> findAllPetTypes() {
         return Arrays.asList(PetType.values());
     }
+
+    @Override
+    public void deleteById(Long id) {
+        lostPetRepository.deleteById(id);
+    }
 }

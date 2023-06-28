@@ -15,5 +15,6 @@ public interface LostPetService {
     void create(LostPetCreateDTO lostPetCreateDTO);
     List<LostPetDTO> findAllByUser(Long userId);
     List<PetType> findAllPetTypes();
+    void deleteById(Long id);
 
 }
