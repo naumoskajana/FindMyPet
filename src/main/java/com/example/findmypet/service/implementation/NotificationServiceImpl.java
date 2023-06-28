@@ -1,6 +1,7 @@
 package com.example.findmypet.service.implementation;
 
 import com.example.findmypet.dto.NotificationDTO;
+import com.example.findmypet.entity.pets.SeenPet;
 import com.example.findmypet.enumeration.NotificationType;
 import com.example.findmypet.repository.NotificationRepository;
 import com.example.findmypet.service.NotificationService;
@@ -23,23 +24,24 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void sendNotification(String title, String content, String token, String userEmail, NotificationType notificationType) {
+    public void sendNotification(String title, String content, NotificationType notificationType, SeenPet seenPet) {
         try {
             Message message = Message.builder()
                     .setNotification(Notification.builder()
                             .setTitle(title)
                             .setBody(content)
                             .build())
-                    .setToken(token)
+                    .setToken(seenPet.getLostPet().getPetOwner().getDeviceToken())
                     .build();
 
             FirebaseMessaging.getInstance().send(message);
 
             com.example.findmypet.entity.user.Notification notification = new com.example.findmypet.entity.user.Notification();
-            notification.setTitle("Нова локација");
+            notification.setTitle(title);
             notification.setBody(content);
-            notification.setUserEmail(userEmail);
+            notification.setUserEmail(seenPet.getLostPet().getPetOwner().getEmail());
             notification.setNotificationType(notificationType);
+            notification.setSeenPet(seenPet);
             notificationRepository.save(notification);
         }
         catch (FirebaseMessagingException e){

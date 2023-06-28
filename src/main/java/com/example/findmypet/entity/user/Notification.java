@@ -1,6 +1,7 @@
 package com.example.findmypet.entity.user;
 
 import com.example.findmypet.dto.NotificationDTO;
+import com.example.findmypet.entity.pets.SeenPet;
 import com.example.findmypet.enumeration.NotificationType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Getter
@@ -42,11 +45,16 @@ public class Notification {
     @Column(name = "notification_type")
     private NotificationType notificationType;
 
+    @ManyToOne
+    @JoinColumn(name = "seen_pet_id")
+    private SeenPet seenPet;
+
     @JsonIgnore
     public NotificationDTO getAsNotificationDTO(){
         NotificationDTO notificationDTO = new NotificationDTO();
         notificationDTO.setTitle(this.title);
         notificationDTO.setBody(this.body);
+        notificationDTO.setSeenPetDTO(this.seenPet.getAsSeenPetDTO());
         return notificationDTO;
     }
 

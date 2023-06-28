@@ -11,5 +11,6 @@ public class NotificationDTO {
 
     private String title;
     private String body;
+    private SeenPetDTO seenPetDTO;
 
 }
