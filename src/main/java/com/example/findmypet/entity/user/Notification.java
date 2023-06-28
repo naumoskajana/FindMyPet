@@ -1,6 +1,8 @@
 package com.example.findmypet.entity.user;
 
+import com.example.findmypet.dto.NotificationDTO;
 import com.example.findmypet.enumeration.NotificationType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,5 +41,13 @@ public class Notification {
     @Enumerated(EnumType.STRING)
     @Column(name = "notification_type")
     private NotificationType notificationType;
+
+    @JsonIgnore
+    public NotificationDTO getAsNotificationDTO(){
+        NotificationDTO notificationDTO = new NotificationDTO();
+        notificationDTO.setTitle(this.title);
+        notificationDTO.setBody(this.body);
+        return notificationDTO;
+    }
 
 }

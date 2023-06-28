@@ -1,5 +1,6 @@
 package com.example.findmypet.service.implementation;
 
+import com.example.findmypet.dto.NotificationDTO;
 import com.example.findmypet.enumeration.NotificationType;
 import com.example.findmypet.repository.NotificationRepository;
 import com.example.findmypet.service.NotificationService;
@@ -10,6 +11,7 @@ import com.google.firebase.messaging.Notification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
@@ -46,8 +48,8 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<com.example.findmypet.entity.user.Notification> findAllByUser(String token) {
-        return notificationRepository.findAllByUser(token);
+    public List<NotificationDTO> findAllByUser(String token) {
+        return notificationRepository.findAllByUser(token).stream().map(com.example.findmypet.entity.user.Notification::getAsNotificationDTO).collect(Collectors.toList());
     }
 
 }

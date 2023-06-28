@@ -1,6 +1,6 @@
 package com.example.findmypet.web;
 
-import com.example.findmypet.entity.user.Notification;
+import com.example.findmypet.dto.NotificationDTO;
 import com.example.findmypet.entity.user.User;
 import com.example.findmypet.service.NotificationService;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ public class NotificationController {
     }
 
     @GetMapping("/all-by-user")
-    public ResponseEntity<List<Notification>> findAllByUser(){
+    public ResponseEntity<List<NotificationDTO>> findAllByUser(){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(notificationService.findAllByUser(user.getDeviceToken()));
     }
