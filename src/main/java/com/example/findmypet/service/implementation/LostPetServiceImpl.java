@@ -55,12 +55,12 @@ public class LostPetServiceImpl implements LostPetService {
     }
 
     @Override
-    public void create(LostPetCreateDTO lostPetCreateDTO) {
+    public void create(LostPetCreateDTO lostPetCreateDTO, String userEmail) {
         LostPet lostPet = new LostPet();
         lostPet.setName(lostPetCreateDTO.getName());
         lostPet.setPetType(lostPetCreateDTO.getPetType());
         lostPet.setAdditionalInformation(lostPetCreateDTO.getAdditionalInformation());
-        lostPet.setPetOwner(userService.findByEmail(lostPetCreateDTO.getUserEmail()));
+        lostPet.setPetOwner(userService.findByEmail(userEmail));
         lostPet.setLostAtTime(lostPetCreateDTO.getLostAtTime());
         try {
             AddressMunicipalityDTO addressMunicipalityDTO = MapUtil.getAddressAndMunicipality(lostPetCreateDTO.getLatitude(), lostPetCreateDTO.getLongitude());

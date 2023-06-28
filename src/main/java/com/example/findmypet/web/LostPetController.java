@@ -49,7 +49,8 @@ public class LostPetController {
     @PostMapping("/create")
     public ResponseEntity<String> create(@RequestBody LostPetCreateDTO lostPetCreateDTO){
         try {
-            lostPetService.create(lostPetCreateDTO);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            lostPetService.create(lostPetCreateDTO, user.getEmail());
             return ResponseEntity.ok("Lost pet created successfully.");
         } catch (CouldNotFetchAddressAndMunicipalityException | LostPetDoesNotExistException | CouldNotSaveFileException ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());

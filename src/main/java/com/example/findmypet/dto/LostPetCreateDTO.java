@@ -16,7 +16,6 @@ public class LostPetCreateDTO {
     private String name;
     private PetType petType;
     private String additionalInformation;
-    private String userEmail;
     private Date lostAtTime;
     private Double longitude;
     private Double latitude;
