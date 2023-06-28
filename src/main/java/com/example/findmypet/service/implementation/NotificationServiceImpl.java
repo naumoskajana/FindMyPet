@@ -23,7 +23,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void sendNotification(String title, String content, String token, NotificationType notificationType) {
+    public void sendNotification(String title, String content, String token, String userEmail, NotificationType notificationType) {
         try {
             Message message = Message.builder()
                     .setNotification(Notification.builder()
@@ -38,7 +38,7 @@ public class NotificationServiceImpl implements NotificationService {
             com.example.findmypet.entity.user.Notification notification = new com.example.findmypet.entity.user.Notification();
             notification.setTitle("Нова локација");
             notification.setBody(content);
-            notification.setToken(token);
+            notification.setUserEmail(userEmail);
             notification.setNotificationType(notificationType);
             notificationRepository.save(notification);
         }
@@ -48,8 +48,8 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<NotificationDTO> findAllByUser(String token) {
-        return notificationRepository.findAllByUser(token).stream().map(com.example.findmypet.entity.user.Notification::getAsNotificationDTO).collect(Collectors.toList());
+    public List<NotificationDTO> findAllByUser(String userEmail) {
+        return notificationRepository.findAllByUser(userEmail).stream().map(com.example.findmypet.entity.user.Notification::getAsNotificationDTO).collect(Collectors.toList());
     }
 
 }

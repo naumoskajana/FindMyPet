@@ -24,7 +24,7 @@ public class NotificationController {
     @GetMapping("/all-by-user")
     public ResponseEntity<List<NotificationDTO>> findAllByUser(){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ResponseEntity.ok(notificationService.findAllByUser(user.getDeviceToken()));
+        return ResponseEntity.ok(notificationService.findAllByUser(user.getEmail()));
     }
 
 }

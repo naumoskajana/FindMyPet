@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-    @Query(nativeQuery = true, value = "SELECT * FROM notifications n WHERE n.token = :token")
-    List<Notification> findAllByUser(@Param("token") String token);
+    @Query(nativeQuery = true, value = "SELECT * FROM notifications n WHERE n.user_email = :userEmail")
+    List<Notification> findAllByUser(@Param("userEmail") String userEmail);
 
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface NotificationService {
 
-    void sendNotification(String title, String content, String token, NotificationType notificationType);
-    List<NotificationDTO> findAllByUser(String token);
+    void sendNotification(String title, String content, String token, String userEmail, NotificationType notificationType);
+    List<NotificationDTO> findAllByUser(String userEmail);
 
 }

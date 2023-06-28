@@ -35,8 +35,8 @@ public class Notification {
     @Column(name = "body")
     private String body;
 
-    @Column(name = "token")
-    private String token;
+    @Column(name = "user_email")
+    private String userEmail;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "notification_type")
