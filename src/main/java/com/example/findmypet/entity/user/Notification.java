@@ -54,6 +54,7 @@ public class Notification {
         NotificationDTO notificationDTO = new NotificationDTO();
         notificationDTO.setTitle(this.title);
         notificationDTO.setBody(this.body);
+        notificationDTO.setType(this.notificationType.name());
         notificationDTO.setSeenPetDTO(this.seenPet.getAsSeenPetDTO());
         return notificationDTO;
     }
