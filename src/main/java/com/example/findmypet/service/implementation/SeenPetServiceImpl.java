@@ -7,6 +7,7 @@ import com.example.findmypet.dto.SeenPetCreateDTO;
 import com.example.findmypet.dto.SeenPetDTO;
 import com.example.findmypet.entity.pets.LostPet;
 import com.example.findmypet.entity.pets.SeenPet;
+import com.example.findmypet.enumeration.NotificationType;
 import com.example.findmypet.repository.SeenPetRepository;
 import com.example.findmypet.service.LocationService;
 import com.example.findmypet.service.LostPetService;
@@ -54,7 +55,7 @@ public class SeenPetServiceImpl implements SeenPetService {
         seenPetRepository.save(seenPet);
         seenPet.setPhoto("Pictures/" + seenPet.getId() + "/" + seenPetCreateDTO.getPhoto().getOriginalFilename());
         seenPetRepository.save(seenPet);
-        notificationService.sendNotification("Миленикот е виден на нова локација!", lostPet.getPetOwner().getDeviceToken());
+        notificationService.sendNotification("Нова локација", "Миленикот е виден на нова локација!", lostPet.getPetOwner().getDeviceToken(), NotificationType.NEW_LOCATION);
         try {
             FileUploadUtil.saveFile("Pictures/" + seenPet.getId(), seenPetCreateDTO.getPhoto().getOriginalFilename(), seenPetCreateDTO.getPhoto());
         }

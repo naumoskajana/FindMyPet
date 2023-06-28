@@ -23,11 +23,11 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void sendNotification(String content, String token) {
+    public void sendNotification(String title, String content, String token, NotificationType notificationType) {
         try {
             Message message = Message.builder()
                     .setNotification(Notification.builder()
-                            .setTitle("Нова локација")
+                            .setTitle(title)
                             .setBody(content)
                             .build())
                     .setToken(token)
@@ -39,7 +39,7 @@ public class NotificationServiceImpl implements NotificationService {
             notification.setTitle("Нова локација");
             notification.setBody(content);
             notification.setToken(token);
-            notification.setNotificationType(NotificationType.NEW_LOCATION);
+            notification.setNotificationType(notificationType);
             notificationRepository.save(notification);
         }
         catch (FirebaseMessagingException e){
