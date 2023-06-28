@@ -29,7 +29,8 @@ public class ChatController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MessageDTO>> getMessages(@RequestParam String senderEmail, @RequestParam String recipientEmail) {
+    public ResponseEntity<List<MessageDTO>> getMessages(@RequestParam("senderEmail") String senderEmail,
+                                                        @RequestParam("recipientEmail") String recipientEmail) {
         return ResponseEntity.ok(messageService.findAllBySenderAndRecipient(senderEmail, recipientEmail));
     }
 

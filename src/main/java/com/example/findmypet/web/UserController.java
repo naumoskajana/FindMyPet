@@ -17,15 +17,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/user")
@@ -80,7 +77,7 @@ public class UserController {
     }
 
     @GetMapping("/validate-token")
-    public ResponseEntity<Boolean> validateToken(@RequestParam String token) {
+    public ResponseEntity<Boolean> validateToken(@RequestParam("token") String token) {
         return ResponseEntity.ok(jwtUtils.validateJwtToken(token));
     }
 
@@ -96,12 +93,13 @@ public class UserController {
     }
 
     @GetMapping("/reset-password")
-    public void resetPasswordLink(@RequestParam String email){
+    public void resetPasswordLink(@RequestParam("email") String email){
         userService.resetPasswordLink(email);
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String password){
+    public ResponseEntity<String> resetPassword(@RequestParam("token") String token,
+                                                @RequestParam("password") String password){
         try {
             userService.resetPassword(token, password);
             return ResponseEntity.ok("User password reset successfully.");

@@ -6,15 +6,18 @@ import com.example.findmypet.exceptions.CouldNotFetchAddressAndMunicipalityExcep
 import com.example.findmypet.exceptions.CouldNotSaveFileException;
 import com.example.findmypet.exceptions.LostPetDoesNotExistException;
 import com.example.findmypet.service.SeenPetService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -28,8 +31,18 @@ public class SeenPetController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> create(@RequestBody SeenPetCreateDTO seenPetCreateDTO){
+    public ResponseEntity<String> create(@RequestParam("lostPetId") Long lostPetId,
+                                         @RequestParam("seenAtTime") @DateTimeFormat(pattern="yyyy-MM-dd") Date seenAtTime,
+                                         @RequestParam("longitude") Double longitude,
+                                         @RequestParam("latitude") Double latitude,
+                                         @RequestPart("photo") MultipartFile photo){
         try {
+            SeenPetCreateDTO seenPetCreateDTO = new SeenPetCreateDTO();
+            seenPetCreateDTO.setLostPetId(lostPetId);
+            seenPetCreateDTO.setSeenAtTime(seenAtTime);
+            seenPetCreateDTO.setLongitude(longitude);
+            seenPetCreateDTO.setLatitude(latitude);
+            seenPetCreateDTO.setPhoto(photo);
             seenPetService.create(seenPetCreateDTO);
             return ResponseEntity.ok("Seen pet created successfully.");
         } catch (CouldNotFetchAddressAndMunicipalityException | LostPetDoesNotExistException | CouldNotSaveFileException ex) {
@@ -38,7 +51,7 @@ public class SeenPetController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SeenPetDTO>> findAllByLostPet(@RequestParam Long lostPetId){
+    public ResponseEntity<List<SeenPetDTO>> findAllByLostPet(@RequestParam("lostPetId") Long lostPetId){
         return ResponseEntity.ok(seenPetService.findAllByLostPet(lostPetId));
     }
 }
