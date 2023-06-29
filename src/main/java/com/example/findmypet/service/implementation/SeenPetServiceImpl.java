@@ -53,12 +53,12 @@ public class SeenPetServiceImpl implements SeenPetService {
                 )
         );
         seenPetRepository.save(seenPet);
-        seenPet.setPhoto("Pictures/" + seenPet.getId() + "/" + seenPetCreateDTO.getPhoto().getOriginalFilename());
-        seenPetRepository.save(seenPet);
         notificationService.sendNotification("Нова локација", "Миленикот е виден на нова локација!", NotificationType.NEW_SEEN_LOCATION, seenPet);
         try {
-            FileUploadUtil.saveFile("Pictures/" + seenPet.getId(), seenPetCreateDTO.getPhoto().getOriginalFilename(), seenPetCreateDTO.getPhoto());
-        }
+            String filePath = FileUploadUtil.saveFile("Pictures/lost-pets/" + lostPet.getId(), seenPetCreateDTO.getPhoto().getOriginalFilename(), seenPetCreateDTO.getPhoto());
+            String photo = filePath.replace("\\", "\\\\");
+            seenPet.setPhoto(photo);
+            seenPetRepository.save(seenPet);        }
         catch (IOException e){
             System.out.println(e);
         }

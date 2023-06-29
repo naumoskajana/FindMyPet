@@ -77,10 +77,11 @@ public class LostPetServiceImpl implements LostPetService {
         }
         lostPet.setLostPetStatus(LostPetStatus.LOST);
         lostPetRepository.save(lostPet);
-        lostPet.setPhoto("Pictures/" + lostPet.getId() + "/" + lostPetCreateDTO.getPhoto().getOriginalFilename());
-        lostPetRepository.save(lostPet);
         try {
-            FileUploadUtil.saveFile("Pictures/" + lostPet.getId(), lostPetCreateDTO.getPhoto().getOriginalFilename(), lostPetCreateDTO.getPhoto());
+            String filePath = FileUploadUtil.saveFile("Pictures/lost-pets/" + lostPet.getId(), lostPetCreateDTO.getPhoto().getOriginalFilename(), lostPetCreateDTO.getPhoto());
+            String photo = filePath.replace("\\", "\\\\");
+            lostPet.setPhoto(photo);
+            lostPetRepository.save(lostPet);
         }
         catch (IOException e){
             throw new CouldNotSaveFileException("Could not save file.");
