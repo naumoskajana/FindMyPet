@@ -32,7 +32,7 @@ public class SeenPetController {
 
     @PostMapping("/create")
     public ResponseEntity<String> create(@RequestParam("lostPetId") Long lostPetId,
-                                         @RequestParam("seenAtTime") @DateTimeFormat(pattern="yyyy-MM-dd") Date seenAtTime,
+                                         @RequestParam("seenAtTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date seenAtTime,
                                          @RequestParam("longitude") Double longitude,
                                          @RequestParam("latitude") Double latitude,
                                          @RequestPart("photo") MultipartFile photo){

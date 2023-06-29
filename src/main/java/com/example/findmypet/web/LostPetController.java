@@ -54,7 +54,7 @@ public class LostPetController {
     public ResponseEntity<String> create(@RequestParam("name") String name,
                                          @RequestParam("petType") PetType petType,
                                          @RequestParam("additionalInformation") String additionalInformation,
-                                         @RequestParam("lostAtTime") @DateTimeFormat(pattern="yyyy-MM-dd") Date lostAtTime,
+                                         @RequestParam("lostAtTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lostAtTime,
                                          @RequestParam("longitude") Double longitude,
                                          @RequestParam("latitude") Double latitude,
                                          @RequestPart("photo") MultipartFile photo){
