@@ -52,6 +52,7 @@ public class Notification {
     @JsonIgnore
     public NotificationDTO getAsNotificationDTO(){
         NotificationDTO notificationDTO = new NotificationDTO();
+        notificationDTO.setId(this.id);
         notificationDTO.setTitle(this.title);
         notificationDTO.setBody(this.body);
         notificationDTO.setType(this.notificationType.name());
