@@ -6,6 +6,7 @@ import com.example.findmypet.dto.AddressMunicipalityDTO;
 import com.example.findmypet.dto.LostPetCreateDTO;
 import com.example.findmypet.dto.LostPetDTO;
 import com.example.findmypet.entity.pets.LostPet;
+import com.example.findmypet.entity.pets.SeenPet;
 import com.example.findmypet.enumeration.LostPetStatus;
 import com.example.findmypet.enumeration.PetType;
 import com.example.findmypet.exceptions.CouldNotFetchAddressAndMunicipalityException;
@@ -14,10 +15,13 @@ import com.example.findmypet.exceptions.LostPetDoesNotExistException;
 import com.example.findmypet.repository.LostPetRepository;
 import com.example.findmypet.service.LocationService;
 import com.example.findmypet.service.LostPetService;
+import com.example.findmypet.service.SeenPetService;
 import com.example.findmypet.service.UserService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,20 +32,32 @@ public class LostPetServiceImpl implements LostPetService {
     private final LostPetRepository lostPetRepository;
     private final UserService userService;
     private final LocationService locationService;
+    private final SeenPetService seenPetService;
 
     public LostPetServiceImpl(LostPetRepository lostPetRepository,
                               UserService userService,
-                              LocationService locationService) {
+                              LocationService locationService,
+                              @Lazy SeenPetService seenPetService) {
         this.lostPetRepository = lostPetRepository;
         this.userService = userService;
         this.locationService = locationService;
+        this.seenPetService = seenPetService;
     }
 
     @Override
     public List<LostPetDTO> findAll(String keyword, List<PetType> petTypes, List<String> municipalities) {
-        return lostPetRepository.findAllSearch(keyword.toLowerCase(), petTypes, municipalities.stream().map(String::toLowerCase).collect(Collectors.toList()))
-                .stream().map(LostPet::getAsLostPetDTO)
-                .collect(Collectors.toList());
+        List<LostPet> lostPets = lostPetRepository.findAllSearch(keyword.toLowerCase(), petTypes, municipalities.stream().map(String::toLowerCase).collect(Collectors.toList()));
+        List<LostPetDTO> lostPetDTOS = new ArrayList<>();
+        for (LostPet lostPet : lostPets){
+            LostPetDTO lostPetDTO = lostPet.getAsLostPetDTO();
+            SeenPet lastSeenPet = seenPetService.getLastSeenPetByLostPet(lostPet.getId());
+            if (lastSeenPet != null){
+                lostPetDTO.setLastSeenAtDate(lastSeenPet.getSeenAtTime());
+                lostPetDTO.setLastSeenAtLocation(lastSeenPet.getSeenAtLocation().getAsLocationDTO());
+            }
+            lostPetDTOS.add(lostPetDTO);
+        }
+        return lostPetDTOS;
     }
 
     @Override

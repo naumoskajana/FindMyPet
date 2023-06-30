@@ -16,6 +16,7 @@ import com.example.findmypet.service.SeenPetService;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,5 +68,15 @@ public class SeenPetServiceImpl implements SeenPetService {
     @Override
     public List<SeenPetDTO> findAllByLostPet(Long lostPetId) {
         return seenPetRepository.findAllByLostPet(lostPetId).stream().map(SeenPet::getAsSeenPetDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public SeenPet getLastSeenPetByLostPet(Long lostPetId) {
+        List<SeenPet> seenPets = seenPetRepository.findAllByLostPet(lostPetId);
+        if (!seenPets.isEmpty()) {
+            seenPets = seenPets.stream().sorted(Comparator.comparing(SeenPet::getSeenAtTime).reversed()).collect(Collectors.toList());
+            return seenPets.get(0);
+        }
+        return null;
     }
 }

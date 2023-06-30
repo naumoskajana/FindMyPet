@@ -20,5 +20,7 @@ public class LostPetDTO {
     private Date lostAtTime;
     private LocationDTO lostAtLocation;
     private String status;
+    private Date lastSeenAtDate;
+    private LocationDTO lastSeenAtLocation;
 
 }
