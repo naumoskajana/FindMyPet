@@ -7,6 +7,7 @@ import com.example.findmypet.dto.SeenPetCreateDTO;
 import com.example.findmypet.dto.SeenPetDTO;
 import com.example.findmypet.entity.pets.LostPet;
 import com.example.findmypet.entity.pets.SeenPet;
+import com.example.findmypet.entity.user.User;
 import com.example.findmypet.enumeration.NotificationType;
 import com.example.findmypet.repository.SeenPetRepository;
 import com.example.findmypet.service.LocationService;
@@ -39,7 +40,7 @@ public class SeenPetServiceImpl implements SeenPetService {
     }
 
     @Override
-    public void create(SeenPetCreateDTO seenPetCreateDTO) {
+    public void create(SeenPetCreateDTO seenPetCreateDTO, User user) {
         SeenPet seenPet = new SeenPet();
         LostPet lostPet = lostPetService.findById(seenPetCreateDTO.getLostPetId());
         seenPet.setLostPet(lostPet);
@@ -53,15 +54,18 @@ public class SeenPetServiceImpl implements SeenPetService {
                         addressMunicipalityDTO.getAddress()
                 )
         );
+        seenPet.setReportedBy(user);
         seenPetRepository.save(seenPet);
         notificationService.sendNotification("Нова локација", "Миленикот е виден на нова локација!", NotificationType.NEW_SEEN_LOCATION, seenPet);
-        try {
-            String filePath = FileUploadUtil.saveFile("Pictures/lost-pets/" + lostPet.getId(), seenPetCreateDTO.getPhoto().getOriginalFilename(), seenPetCreateDTO.getPhoto());
-            String photo = filePath.replace("\\", "\\\\");
-            seenPet.setPhoto(photo);
-            seenPetRepository.save(seenPet);        }
-        catch (IOException e){
-            System.out.println(e);
+        if (seenPetCreateDTO.getPhoto() != null) {
+            try {
+                String filePath = FileUploadUtil.saveFile("Pictures/lost-pets/" + lostPet.getId(), seenPetCreateDTO.getPhoto().getOriginalFilename(), seenPetCreateDTO.getPhoto());
+                String photo = filePath.replace("\\", "\\\\");
+                seenPet.setPhoto(photo);
+                seenPetRepository.save(seenPet);
+            } catch (IOException e){
+                System.out.println(e);
+            }
         }
     }
 
