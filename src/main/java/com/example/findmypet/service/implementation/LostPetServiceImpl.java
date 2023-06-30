@@ -123,4 +123,11 @@ public class LostPetServiceImpl implements LostPetService {
         lostPetRepository.deleteById(id);
         locationService.delete(location);
     }
+
+    @Override
+    public void deleteLostPetsByUser(Long userId) {
+        List<Long> lostPetsIds = lostPetRepository.findAllByUser(userId)
+                .stream().map(LostPet::getId).collect(Collectors.toList());
+        lostPetsIds.forEach(this::deleteById);
+    }
 }

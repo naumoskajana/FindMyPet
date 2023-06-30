@@ -1,7 +1,6 @@
 package com.example.findmypet.service.implementation;
 
 import com.example.findmypet.dto.UserChangeDTO;
-import com.example.findmypet.dto.UserDTO;
 import com.example.findmypet.dto.UserLoginDTO;
 import com.example.findmypet.dto.UserRegistrationDTO;
 import com.example.findmypet.enumeration.UserType;
@@ -13,7 +12,9 @@ import com.example.findmypet.exceptions.UserHasInactiveAccountException;
 import com.example.findmypet.repository.UserRepository;
 import com.example.findmypet.config.security.JwtUtils;
 import com.example.findmypet.service.EmailService;
+import com.example.findmypet.service.LostPetService;
 import com.example.findmypet.service.UserService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,15 +27,18 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final LostPetService lostPetService;
     private final JwtUtils jwtTokenUtil;
 
     public UserServiceImpl(UserRepository userRepository,
                            PasswordEncoder passwordEncoder,
                            EmailService emailService,
+                           @Lazy LostPetService lostPetService,
                            JwtUtils jwtTokenUtil) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
+        this.lostPetService = lostPetService;
         this.jwtTokenUtil = jwtTokenUtil;
     }
 
@@ -135,6 +139,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long userId) {
+        lostPetService.deleteLostPetsByUser(userId);
         userRepository.deleteById(userId);
     }
 
