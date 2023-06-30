@@ -5,6 +5,8 @@ import com.example.findmypet.repository.CoordinateRepository;
 import com.example.findmypet.service.CoordinateService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CoordinateServiceImpl implements CoordinateService {
 
@@ -20,5 +22,15 @@ public class CoordinateServiceImpl implements CoordinateService {
         coordinate.setLongitude(longitude);
         coordinate.setLatitude(latitude);
         return coordinateRepository.save(coordinate);
+    }
+
+    @Override
+    public void delete(Coordinate coordinates) {
+        coordinateRepository.delete(coordinates);
+    }
+
+    @Override
+    public void deleteAllByLocation(List<Coordinate> coordinates) {
+        coordinateRepository.deleteAll(coordinates);
     }
 }

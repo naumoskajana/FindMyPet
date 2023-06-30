@@ -1,5 +1,6 @@
 package com.example.findmypet.service.implementation;
 
+import com.example.findmypet.entity.location.Coordinate;
 import com.example.findmypet.entity.location.Location;
 import com.example.findmypet.repository.LocationRepository;
 import com.example.findmypet.service.CoordinateService;
@@ -32,5 +33,19 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public List<String> getAllMunicipalities() {
         return locationRepository.findAll().stream().map(Location::getMunicipality).collect(Collectors.toList());
+    }
+
+    @Override
+    public void delete(Location location) {
+        Coordinate coordinates = location.getCoordinates();
+        locationRepository.delete(location);
+        coordinateService.delete(coordinates);
+    }
+
+    @Override
+    public void deleteAllBySeenPet(List<Location> locations) {
+        List<Coordinate> coordinates = locations.stream().map(Location::getCoordinates).collect(Collectors.toList());
+        locationRepository.deleteAll(locations);
+        coordinateService.deleteAllByLocation(coordinates);
     }
 }

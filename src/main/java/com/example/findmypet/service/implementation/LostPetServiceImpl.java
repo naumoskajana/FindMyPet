@@ -5,6 +5,7 @@ import com.example.findmypet.config.map.MapUtil;
 import com.example.findmypet.dto.AddressMunicipalityDTO;
 import com.example.findmypet.dto.LostPetCreateDTO;
 import com.example.findmypet.dto.LostPetDTO;
+import com.example.findmypet.entity.location.Location;
 import com.example.findmypet.entity.pets.LostPet;
 import com.example.findmypet.entity.pets.SeenPet;
 import com.example.findmypet.enumeration.LostPetStatus;
@@ -116,6 +117,10 @@ public class LostPetServiceImpl implements LostPetService {
 
     @Override
     public void deleteById(Long id) {
+        LostPet lostPet = findById(id);
+        Location location = lostPet.getLostAtLocation();
+        seenPetService.deleteSeenPetsByLostPet(id);
         lostPetRepository.deleteById(id);
+        locationService.delete(location);
     }
 }

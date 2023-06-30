@@ -12,5 +12,6 @@ public interface SeenPetService {
     void create(SeenPetCreateDTO seenPetCreateDTO, User user);
     List<SeenPetDTO> findAllByLostPet(Long lostPetId);
     SeenPet getLastSeenPetByLostPet(Long lostPetId);
+    void deleteSeenPetsByLostPet(Long lostPetId);
 
 }
