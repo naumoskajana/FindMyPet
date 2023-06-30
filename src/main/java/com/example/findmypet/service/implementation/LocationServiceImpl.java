@@ -42,10 +42,4 @@ public class LocationServiceImpl implements LocationService {
         coordinateService.delete(coordinates);
     }
 
-    @Override
-    public void deleteAllBySeenPet(List<Location> locations) {
-        List<Coordinate> coordinates = locations.stream().map(Location::getCoordinates).collect(Collectors.toList());
-        locationRepository.deleteAll(locations);
-        coordinateService.deleteAllByLocation(coordinates);
-    }
 }

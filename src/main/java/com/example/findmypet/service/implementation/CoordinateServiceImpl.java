@@ -29,8 +29,4 @@ public class CoordinateServiceImpl implements CoordinateService {
         coordinateRepository.delete(coordinates);
     }
 
-    @Override
-    public void deleteAllByLocation(List<Coordinate> coordinates) {
-        coordinateRepository.deleteAll(coordinates);
-    }
 }

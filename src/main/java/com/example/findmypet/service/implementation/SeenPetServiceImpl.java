@@ -90,6 +90,7 @@ public class SeenPetServiceImpl implements SeenPetService {
         List<SeenPet> seenPets = seenPetRepository.findAllByLostPet(lostPetId);
         List<Location> locations = seenPets.stream().map(SeenPet::getSeenAtLocation).collect(Collectors.toList());
         seenPetRepository.deleteAll(seenPets);
-        locationService.deleteAllBySeenPet(locations);
+        locations.forEach(locationService::delete);
     }
+
 }
