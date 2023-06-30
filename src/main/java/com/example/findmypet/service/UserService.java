@@ -11,6 +11,7 @@ public interface UserService extends UserDetailsService {
     void register(UserRegistrationDTO userRegistrationDTO);
     void confirmRegistration(String token);
     void login(UserLoginDTO userLoginDTO);
+    void setDeviceToken(String deviceToken, User user);
     User findByEmail(String email);
     void changeUserDetails(User user, UserChangeDTO userChangeDTO);
     void resetPasswordLink(String email);

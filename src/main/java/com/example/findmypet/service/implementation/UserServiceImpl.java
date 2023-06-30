@@ -84,8 +84,12 @@ public class UserServiceImpl implements UserService {
             throw new UserHasInactiveAccountException(user.getEmail());
         }
 
-        user.setDeviceToken(userLoginDTO.getDeviceToken());
+        userRepository.save(user);
+    }
 
+    @Override
+    public void setDeviceToken(String deviceToken, User user) {
+        user.setDeviceToken(deviceToken);
         userRepository.save(user);
     }
 

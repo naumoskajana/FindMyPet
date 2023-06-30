@@ -76,6 +76,14 @@ public class UserController {
         return ResponseEntity.ok(jwtUtils.generateJwtToken(authentication));
     }
 
+    @PostMapping("/set-token")
+    public ResponseEntity<String> setToken(@RequestParam("deviceToken") String deviceToken) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userService.setDeviceToken(deviceToken, user);
+
+        return ResponseEntity.ok("Device token set successfully");
+    }
+
     @GetMapping("/validate-token")
     public ResponseEntity<Boolean> validateToken(@RequestParam("token") String token) {
         return ResponseEntity.ok(jwtUtils.validateJwtToken(token));
