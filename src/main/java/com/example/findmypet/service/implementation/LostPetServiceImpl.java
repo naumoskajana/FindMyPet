@@ -5,9 +5,9 @@ import com.example.findmypet.config.map.MapUtil;
 import com.example.findmypet.dto.AddressMunicipalityDTO;
 import com.example.findmypet.dto.LostPetCreateDTO;
 import com.example.findmypet.dto.LostPetDTO;
+import com.example.findmypet.dto.SeenPetForLostPetDTO;
 import com.example.findmypet.entity.location.Location;
 import com.example.findmypet.entity.pets.LostPet;
-import com.example.findmypet.entity.pets.SeenPet;
 import com.example.findmypet.enumeration.LostPetStatus;
 import com.example.findmypet.enumeration.PetType;
 import com.example.findmypet.exceptions.CouldNotFetchAddressAndMunicipalityException;
@@ -51,11 +51,8 @@ public class LostPetServiceImpl implements LostPetService {
         List<LostPetDTO> lostPetDTOS = new ArrayList<>();
         for (LostPet lostPet : lostPets){
             LostPetDTO lostPetDTO = lostPet.getAsLostPetDTO();
-            SeenPet lastSeenPet = seenPetService.getLastSeenPetByLostPet(lostPet.getId());
-            if (lastSeenPet != null){
-                lostPetDTO.setLastSeenAtDate(lastSeenPet.getSeenAtTime());
-                lostPetDTO.setLastSeenAtLocation(lastSeenPet.getSeenAtLocation().getAsLocationDTO());
-            }
+            List<SeenPetForLostPetDTO> seenPets = seenPetService.getLastSeenPetsByLostPet(lostPet.getId());
+            lostPetDTO.setSeenPets(seenPets);
             lostPetDTOS.add(lostPetDTO);
         }
         return lostPetDTOS;

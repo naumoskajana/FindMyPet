@@ -1,6 +1,7 @@
 package com.example.findmypet.entity.pets;
 
 import com.example.findmypet.dto.SeenPetDTO;
+import com.example.findmypet.dto.SeenPetForLostPetDTO;
 import com.example.findmypet.entity.location.Location;
 import com.example.findmypet.entity.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -64,6 +65,20 @@ public class SeenPet {
         }
         seenPetDTO.setPhoto(this.photo);
         return seenPetDTO;
+    }
+
+    @JsonIgnore
+    public SeenPetForLostPetDTO getAsSeenPetForLostPetDTO(){
+        SeenPetForLostPetDTO seenPetForLostPetDTO = new SeenPetForLostPetDTO();
+        seenPetForLostPetDTO.setSeenAtTime(this.seenAtTime);
+        if (this.seenAtLocation != null){
+            seenPetForLostPetDTO.setSeenAtLocation(this.seenAtLocation.getAsLocationDTO());
+        }
+        if (this.reportedBy != null){
+            seenPetForLostPetDTO.setReportedBy(this.reportedBy.getAsUserDTO());
+        }
+        seenPetForLostPetDTO.setPhoto(this.photo);
+        return seenPetForLostPetDTO;
     }
 
 }
