@@ -1,7 +1,7 @@
 package com.example.findmypet.web;
 
 import com.example.findmypet.dto.SeenPetCreateDTO;
-import com.example.findmypet.dto.SeenPetDTO;
+import com.example.findmypet.dto.SeenPetForLostPetDTO;
 import com.example.findmypet.entity.user.User;
 import com.example.findmypet.exceptions.CouldNotFetchAddressAndMunicipalityException;
 import com.example.findmypet.exceptions.CouldNotSaveFileException;
@@ -54,7 +54,7 @@ public class SeenPetController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SeenPetDTO>> findAllByLostPet(@RequestParam("lostPetId") Long lostPetId){
+    public ResponseEntity<List<SeenPetForLostPetDTO>> findAllByLostPet(@RequestParam("lostPetId") Long lostPetId){
         return ResponseEntity.ok(seenPetService.findAllByLostPet(lostPetId));
     }
 }
