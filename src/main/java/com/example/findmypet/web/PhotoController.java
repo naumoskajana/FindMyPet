@@ -22,7 +22,7 @@ public class PhotoController {
     public ResponseEntity<Resource> getLostPetPhoto(@PathVariable String photoPath) {
         try {
             String decodedPath = URLDecoder.decode(photoPath, "UTF-8");
-            Resource resource = new FileSystemResource(photoPath);
+            Resource resource = new FileSystemResource(decodedPath);
             if (resource.exists()) {
                 HttpHeaders headers = new HttpHeaders();
 
