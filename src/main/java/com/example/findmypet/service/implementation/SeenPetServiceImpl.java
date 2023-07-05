@@ -4,7 +4,7 @@ import com.example.findmypet.config.file.FileUploadUtil;
 import com.example.findmypet.config.map.MapUtil;
 import com.example.findmypet.dto.AddressMunicipalityDTO;
 import com.example.findmypet.dto.SeenPetCreateDTO;
-import com.example.findmypet.dto.SeenPetDTO;
+import com.example.findmypet.dto.SeenPetForLostPetDTO;
 import com.example.findmypet.entity.location.Location;
 import com.example.findmypet.entity.pets.LostPet;
 import com.example.findmypet.entity.pets.SeenPet;
@@ -71,8 +71,8 @@ public class SeenPetServiceImpl implements SeenPetService {
     }
 
     @Override
-    public List<SeenPetDTO> findAllByLostPet(Long lostPetId) {
-        return seenPetRepository.findAllByLostPet(lostPetId).stream().map(SeenPet::getAsSeenPetDTO).collect(Collectors.toList());
+    public List<SeenPetForLostPetDTO> findAllByLostPet(Long lostPetId) {
+        return seenPetRepository.findAllByLostPet(lostPetId).stream().map(SeenPet::getAsSeenPetForLostPetDTO).sorted(Comparator.comparing(SeenPetForLostPetDTO::getSeenAtTime).reversed()).collect(Collectors.toList());
     }
 
     @Override

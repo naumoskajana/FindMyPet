@@ -32,13 +32,14 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public List<String> getAllMunicipalities() {
-        return locationRepository.findAll().stream().map(Location::getMunicipality).collect(Collectors.toList());
+        return locationRepository.getUniqueMunicipalities();
     }
+
 
     @Override
     public void delete(Location location) {
         Coordinate coordinates = location.getCoordinates();
-        locationRepository.delete(location);
+        locationRepository.deleteById(location.getId());
         coordinateService.delete(coordinates);
     }
 

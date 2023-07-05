@@ -26,7 +26,7 @@ public class CoordinateServiceImpl implements CoordinateService {
 
     @Override
     public void delete(Coordinate coordinates) {
-        coordinateRepository.delete(coordinates);
+        coordinateRepository.deleteById(coordinates.getId());
     }
 
 }
