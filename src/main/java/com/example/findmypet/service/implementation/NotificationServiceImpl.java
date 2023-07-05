@@ -54,4 +54,9 @@ public class NotificationServiceImpl implements NotificationService {
         return notificationRepository.findAllByUser(userEmail).stream().map(com.example.findmypet.entity.user.Notification::getAsNotificationDTO).collect(Collectors.toList());
     }
 
+    @Override
+    public void deleteById(Long id) {
+        notificationRepository.deleteById(id);
+    }
+
 }

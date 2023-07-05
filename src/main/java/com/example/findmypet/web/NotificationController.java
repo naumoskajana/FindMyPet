@@ -6,6 +6,7 @@ import com.example.findmypet.service.NotificationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,6 +26,11 @@ public class NotificationController {
     public ResponseEntity<List<NotificationDTO>> findAllByUser(){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(notificationService.findAllByUser(user.getEmail()));
+    }
+
+    @GetMapping("/delete/{id}")
+    public void deleteById(@PathVariable Long id){
+        notificationService.deleteById(id);
     }
 
 }

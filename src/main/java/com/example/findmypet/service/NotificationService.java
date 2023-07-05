@@ -10,5 +10,6 @@ public interface NotificationService {
 
     void sendNotification(String title, String content, NotificationType notificationType, SeenPet seenPet);
     List<NotificationDTO> findAllByUser(String userEmail);
+    void deleteById(Long id);
 
 }
