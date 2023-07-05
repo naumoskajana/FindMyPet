@@ -72,7 +72,10 @@ public class SeenPetServiceImpl implements SeenPetService {
 
     @Override
     public List<SeenPetForLostPetDTO> findAllByLostPet(Long lostPetId) {
-        return seenPetRepository.findAllByLostPet(lostPetId).stream().map(SeenPet::getAsSeenPetForLostPetDTO).sorted(Comparator.comparing(SeenPetForLostPetDTO::getSeenAtTime).reversed()).collect(Collectors.toList());
+        return seenPetRepository.findAllByLostPet(lostPetId).stream()
+                .map(SeenPet::getAsSeenPetForLostPetDTO)
+                .sorted(Comparator.comparing(SeenPetForLostPetDTO::getSeenAtTime).reversed())
+                .collect(Collectors.toList());
     }
 
     @Override
