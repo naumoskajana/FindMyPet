@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -21,6 +20,7 @@ public class LostPetDTO {
     private Date lostAtTime;
     private LocationDTO lostAtLocation;
     private String status;
-    private List<SeenPetForLostPetDTO> seenPets;
+    private Date lastSeenAtDate;
+    private LocationDTO lastSeenAtLocation;
 
 }
