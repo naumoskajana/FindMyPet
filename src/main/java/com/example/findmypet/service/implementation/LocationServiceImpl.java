@@ -8,7 +8,6 @@ import com.example.findmypet.service.LocationService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class LocationServiceImpl implements LocationService {

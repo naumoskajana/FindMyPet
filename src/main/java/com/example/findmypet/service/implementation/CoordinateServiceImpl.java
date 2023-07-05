@@ -5,8 +5,6 @@ import com.example.findmypet.repository.CoordinateRepository;
 import com.example.findmypet.service.CoordinateService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class CoordinateServiceImpl implements CoordinateService {
 
