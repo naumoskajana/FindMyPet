@@ -57,7 +57,7 @@ public class SeenPetServiceImpl implements SeenPetService {
         );
         seenPet.setReportedBy(user);
         seenPetRepository.save(seenPet);
-        notificationService.sendNotification("Нова локација", "Миленикот е виден на нова локација!", NotificationType.NEW_SEEN_LOCATION, seenPet);
+        notificationService.sendNotification("Нова локација", "Вашиот миленик " + lostPet.getName() + " е виден на нова локација!", NotificationType.NEW_SEEN_LOCATION, seenPet);
         if (seenPetCreateDTO.getPhoto() != null) {
             try {
                 String filePath = FileUploadUtil.saveFile("Pictures/lost-pets/" + lostPet.getId(), seenPetCreateDTO.getPhoto().getOriginalFilename(), seenPetCreateDTO.getPhoto());

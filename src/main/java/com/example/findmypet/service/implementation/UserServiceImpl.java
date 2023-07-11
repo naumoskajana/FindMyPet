@@ -51,8 +51,11 @@ public class UserServiceImpl implements UserService {
         }
 
         User newUser = new User();
-        newUser.setFirstName(userRegistrationDTO.getFullName().split(" ")[0]);
-        newUser.setLastName(userRegistrationDTO.getFullName().split(" ")[1]);
+        String[] fullNameSplitted = userRegistrationDTO.getFullName().split("\\s+");
+        String firstName = fullNameSplitted[0];
+        String lastName = fullNameSplitted.length > 1 ? fullNameSplitted[1] : "";
+        newUser.setFirstName(firstName);
+        newUser.setLastName(lastName);
         newUser.setEmail(userRegistrationDTO.getEmail());
         newUser.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
         newUser.setPhoneNumber(userRegistrationDTO.getPhoneNumber());

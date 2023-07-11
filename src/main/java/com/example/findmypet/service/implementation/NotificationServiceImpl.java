@@ -9,6 +9,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,13 +20,15 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
 
+    @Autowired
+    private FirebaseMessaging firebaseMessaging;
+
     public NotificationServiceImpl(NotificationRepository notificationRepository) {
         this.notificationRepository = notificationRepository;
     }
 
     @Override
     public void sendNotification(String title, String content, NotificationType notificationType, SeenPet seenPet) {
-        try {
             Message message = Message.builder()
                     .setNotification(Notification.builder()
                             .setTitle(title)
@@ -34,7 +37,11 @@ public class NotificationServiceImpl implements NotificationService {
                     .setToken(seenPet.getLostPet().getPetOwner().getDeviceToken())
                     .build();
 
-            FirebaseMessaging.getInstance().send(message);
+            try {
+                firebaseMessaging.send(message);
+            } catch (FirebaseMessagingException e) {
+                e.printStackTrace();
+            }
 
             com.example.findmypet.entity.user.Notification notification = new com.example.findmypet.entity.user.Notification();
             notification.setTitle(title);
@@ -43,10 +50,6 @@ public class NotificationServiceImpl implements NotificationService {
             notification.setNotificationType(notificationType);
             notification.setSeenPet(seenPet);
             notificationRepository.save(notification);
-        }
-        catch (FirebaseMessagingException e){
-            System.out.println(e);
-        }
     }
 
     @Override
