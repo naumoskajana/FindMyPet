@@ -14,6 +14,7 @@ import com.example.findmypet.config.security.JwtUtils;
 import com.example.findmypet.service.EmailService;
 import com.example.findmypet.service.LostPetService;
 import com.example.findmypet.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,6 +30,13 @@ public class UserServiceImpl implements UserService {
     private final EmailService emailService;
     private final LostPetService lostPetService;
     private final JwtUtils jwtTokenUtil;
+
+
+    @Value("${server.port}")
+    private String serverPort;
+
+    @Value("${host}")
+    private String serverHost;
 
     public UserServiceImpl(UserRepository userRepository,
                            PasswordEncoder passwordEncoder,
@@ -64,7 +72,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(newUser);
 
         String token = jwtTokenUtil.generateJwtToken(new UsernamePasswordAuthenticationToken(newUser, null));
-        String confirmationLink = "Ве молиме кликнете на следниот линк за активација на профилот: http://localhost:8080/api/token/profile-activation-template?token=" + token;
+        String confirmationLink = "Ве молиме кликнете на следниот линк за активација на профилот: http://" + serverHost + ":" + serverPort + "/api/token/profile-activation-template?token=" + token;
         emailService.sendMessage(userRegistrationDTO.getEmail(), "Активација на профил", confirmationLink);
     }
 
@@ -129,7 +137,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void resetPasswordLink(String email) {
         String token = jwtTokenUtil.generateJwtToken(new UsernamePasswordAuthenticationToken(findByEmail(email), null));
-        String resetPasswordLink = "Ве молиме кликнете на линкот за промена на вашата лозинка: http://localhost:8080/api/token/reset-password-template?token=" + token;
+        String resetPasswordLink = "Ве молиме кликнете на линкот за промена на вашата лозинка: http://" + serverHost + ":" + serverPort + "/api/token/reset-password-template?token=" + token;
         emailService.sendMessage(email, "Промена на лозинка", resetPasswordLink);
     }
 
